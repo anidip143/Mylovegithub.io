@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magical Love Animation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;400;900&family=Sixtyfour+Convergence&display=swap');
+
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at top, #111, #000);
+            font-family: 'Sixtyfour Convergence', sans-serif;
+        }
+
+        .btn {
+            background-color: pink;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            letter-spacing: 1px;
+            color: white;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.8), 
+                        0 0 40px rgba(255, 105, 180, 0.5);
+            transition: all 0.4s ease-in-out;
+            z-index: 10;
+        }
+
+        .btn:hover {
+            background-color: orangered;
+            transform: scale(1.1);
+            box-shadow: 0 0 30px orangered, 0 0 60px rgba(255, 69, 0, 0.7);
+        }
+
+        /* Ripple Effect */
+        .btn::before {
+            content: "";
+            position: absolute;
+            background-color: rgba(255, 69, 0, 0.7);
+            width: 0;
+            height: 0;
+            left: var(--xpos);
+            top: var(--ypos);
+            border-radius: 50%;
+            transition: width 0.6s, height 0.6s, opacity 0.4s;
+            z-index: 0;
+        }
+
+        .btn:active::before {
+            width: 400px;
+            height: 400px;
+            opacity: 0;
+        }
+
+        /* Heart Trail */
+        #heart-trail {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #heart-trail span {
+            background: url("https://cdn4.iconfinder.com/data/icons/general-office/91/General_Office_54-512.png");
+            width: 80px;
+            height: 80px;
+            position: absolute;
+            background-size: cover;
+            pointer-events: none;
+            animation: animate 6s linear infinite;
+            filter: drop-shadow(0 0 10px white);
+        }
+
+        @keyframes animate {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+                filter: hue-rotate(0deg);
+            }
+            100% {
+                transform: translate(-50%, -300%) scale(0.5);
+                opacity: 0;
+                filter: hue-rotate(360deg);
+            }
+        }
+
+        /* Text Animation */
+        .text-container {
+            position: absolute;
+            bottom: 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .text-container h1 {
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px #ff69b4, 0 0 30px #ff69b4;
+        }
+
+        /* Love Letter in the Center */
+        .love-letter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 2.5rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            text-shadow: 0 0 10px red, 0 0 30px crimson;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Single Button to Trigger All Animations -->
+    <div class="btn" id="trigger-button"><span>Click Me</span></div>
+
+    <!-- Heart Trail Effect -->
+    <div id="heart-trail"></div>
+
+    <!-- Text Animation -->
+    <div class="text-container">
+        <div class="container"></div>
+    </div>
+
+    <!-- Love Letter -->
+    <div class="love-letter" id="love-letter">
+        I LOVE YOU ❤️ SWEETHEART 💖
+    </div>
+
+    <script>
+        const heartTrail = document.getElementById('heart-trail');
+        const rippleButton = document.getElementById('trigger-button');
+        const textContainer = document.querySelector('.container');
+        const loveLetter = document.getElementById('love-letter');
+        const buttons = document.querySelectorAll('.btn');
+
+        const words = ["You", "Your Smile", "Your Lips", "Your Eyes"];
+        let wordIndex = 0, charIndex = 0;
+
+        function updateText() {
+            charIndex++;
+            textContainer.innerHTML = `<h1>I Love ${words[wordIndex].slice(0, charIndex)}</h1>`;
+            if (charIndex === words[wordIndex].length) {
+                wordIndex = (wordIndex + 1) % words.length;
+                charIndex = 0;
+            }
+            setTimeout(updateText, 400);
+        }
+
+        function startHeartTrail() {
+            heartTrail.addEventListener('mousemove', (event) => {
+                const span = document.createElement('span');
+                span.style.left = `${event.clientX}px`;
+                span.style.top = `${event.clientY}px`;
+                const size = Math.random() * 80 + 20;
+                span.style.width = `${size}px`;
+                span.style.height = `${size}px`;
+                heartTrail.appendChild(span);
+                setTimeout(() => span.remove(), 3000);
+            });
+        }
+
+        rippleButton.addEventListener('click', (event) => {
+            const x = event.pageX - rippleButton.offsetLeft;
+            const y = event.pageY - rippleButton.offsetTop;
+            rippleButton.style.setProperty('--xpos', `${x}px`);
+            rippleButton.style.setProperty('--ypos', `${y}px`);
+
+            buttons.forEach(button => button.style.display = 'none');
+            loveLetter.style.opacity = 1;
+
+            startHeartTrail();
+            updateText();
+        });
+    </script>
+
+</body>
+</html>
